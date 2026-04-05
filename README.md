@@ -65,6 +65,11 @@
 - 17.3.10 (需执行 `./reset-trial.sh`)
 
 
+## 引用
+
+- [pretend-m/navicat_for_mac_reset](https://github.com/pretend-m/navicat_for_mac_reset)
+- [tuxity/navicat-premium-reset-trial](https://github.com/tuxity/navicat-premium-reset-trial)
+
 ## 许可证
 
 ![](image/LGPL.svg)
