@@ -1,6 +1,6 @@
 # navicat16/17 mac版无限重置试用期脚本
 
-> **V2 新版本：** [navicat-v2.sh](navicat-v2.sh) · [V2 使用说明](V2_README.md)。增加只读检测、Dry Run、备份、日志和恢复；目前仅在旧版适用范围内开放受控重置，Navicat 18 重置尚未验证。
+> **V2.1 安全维护版：** [navicat-v2.sh](navicat-v2.sh) · [V2.1 使用说明](V2_README.md) · [隔离测试](tests/test_v21.py)。支持 `doctor`、SHA-256 备份校验、冲突归档与恢复回滚。Navicat 18 可检测、备份和恢复，重置仍主动禁用。
 
 ## 免责声明
 
@@ -11,11 +11,14 @@
 - **本脚本适用于mac系统，不适用于windows**
 - **如果遇到bug问题，请反馈issue给我**
 
-## 使用说明
+## 历史脚本使用说明（仅供参考）
+
+> 优先使用上方 V2.1 工具。以下是历史脚本说明，不代表最新版本的实际兼容性。请勿使用 `sudo chmod -R 777`。
+
 
 - 从 [navicat premium](https://www.navicat.com.cn/download/navicat-premium) 官网下载最新版。安装并运行，选择试用14天。
 - 待试用到期后，在终端进入脚本所在文件夹，运行重置脚本。执行命令：`sh reset_navicat.sh` 或者 双击执行reset_navicat.command。
-- 使用双击执行reset_navicat.command注意事项: 1.reset_navicat.command与reset_navicat.sh需在同一目录下。2.初次使用需要授权安全性。3.如弹出无权限请进入终端，移动到当前文件夹，输入`sudo chmod -R 777 reset_navicat.command`回车(需要输入本机密码)。然后则重新双击执行reset_navicat.command
+- 使用双击执行reset_navicat.command注意事项: 1.reset_navicat.command与reset_navicat.sh需在同一目录下。2.初次使用需要授权安全性。3.如弹出无权限请进入终端，移动到当前文件夹，输入`chmod u+x reset_navicat.command`回车。然后则重新双击执行reset_navicat.command
 - 执行脚本前需要关闭navicat,重启电脑
 - 然后开机后直接执行脚本，在打开navicat查看是否重置试用期
 - 如上方法无效的情况下,卸载现有版本，然后点击 [navicat premium](https://www.navicat.com.cn/download/navicat-premium) 下载最新版本，然后关机重启，执行脚本
