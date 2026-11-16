@@ -224,6 +224,7 @@ verify_backup() {
     local f
     shopt -s nullglob
     for f in "$dir"/hidden/.*; do
+      [[ "$f" == "$dir/hidden/." || "$f" == "$dir/hidden/.." ]] && continue
       [[ -f "$f" && ! -L "$f" ]] || fail "Unsafe legacy snapshot file"
       [[ "${f##*/}" =~ ^\.[A-Z0-9]{32}$ ]] || fail "Invalid legacy hidden filename"
     done
@@ -241,6 +242,7 @@ prepare_restore() {
   fi
   shopt -s nullglob
   for f in "$dir"/hidden/.*; do
+    [[ "$f" == "$dir/hidden/." || "$f" == "$dir/hidden/.." ]] && continue
     [[ -f "$f" && ! -L "$f" ]] || fail "Unsafe snapshot file"
     name="${f##*/}"
     [[ "$name" =~ ^\.[A-Z0-9]{32}$ ]] || fail "Unsafe hidden filename"
