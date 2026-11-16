@@ -22,12 +22,19 @@ V2.1 在原有 `navicat-v2.sh` 上增加 **SHA-256 备份清单校验、只读 `
 bash -n navicat-v2.sh
 bash navicat-v2.sh inspect           # 只读，输出环境和匹配数量
 bash navicat-v2.sh doctor            # 只读，附带扫描现有备份健康度
+bash navicat-v2.sh audit-18          # 仅 Navicat 18：只读指纹审计，不重置试用期
 bash navicat-v2.sh dry-run           # 只读，预览重置是否会被策略阻止
 bash navicat-v2.sh backup            # 生成带 SHA-256 清单的备份
 bash navicat-v2.sh backups           # 列出备份 ID
 bash navicat-v2.sh verify-backup ID  # 校验备份 SHA-256 清单和文件清单
 bash navicat-v2.sh restore ID --confirm RESTORE  # 未修改或缺失目标时的恢复
 ```
+
+### Navicat 18 实验分支只读审计
+
+`audit-18` 在 18.x 中报告偏好文件和符合旧格式的隐藏文件的大小及 SHA-256 指纹，以便在不删除任何记录的条件下比较环境快照。不会打印 plist 键值或文件内容，不读取 Keychain，不创建日志或备份，也不启用试用重置。对非 18 版本会明确拒绝。
+
+**注意：** 指纹变化只能说明文件字节发生改变，不能证明字段属于授权或试用状态。本实验分支仍然阻止 Navicat 18 执行 `reset`。
 
 `restore` 遇到现有内容和备份内容不一致时**默认拒绝覆盖**。明确希望保留当前文件并恢复备份时，可执行：
 
