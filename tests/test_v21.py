@@ -58,6 +58,28 @@ class V21Tests(unittest.TestCase):
         self.run_script("dry-run")
         self.assertEqual(logfile.read_bytes(), data)
 
+
+    def test_navicat18_audit_is_read_only_and_reports_fingerprints(self):
+        before_prefs = self.prefs.read_bytes()
+        before_hidden = (self.hidden1.read_bytes(), self.hidden2.read_bytes())
+        output = self.run_script("audit-18")
+        self.assertIn("Navicat 18 read-only audit", output)
+        self.assertIn("matching_keys=2 matching_hidden_files=2", output)
+        self.assertIn("preferences: size=", output)
+        self.assertIn("matching_hidden_file[1]: size=", output)
+        self.assertIn("reset remains blocked", output)
+        self.assertNotIn(H1, output)
+        self.assertNotIn(H2, output)
+        self.assertFalse((self.root / "state").exists())
+        self.assertEqual(self.prefs.read_bytes(), before_prefs)
+        self.assertEqual((self.hidden1.read_bytes(), self.hidden2.read_bytes()), before_hidden)
+
+    def test_navicat18_audit_rejects_other_versions(self):
+        (self.root / "app" / "version").write_text("17.3.6\n")
+        output = self.run_script("audit-18", ok=False)
+        self.assertIn("requires Navicat Premium version 18", output)
+        self.assertFalse((self.root / "state").exists())
+
     def test_backup_verify_and_unchanged_restore(self):
         backup_id = self.backup()
         snapshot = self.root / "state" / "backups" / backup_id
