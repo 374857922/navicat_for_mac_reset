@@ -31,6 +31,7 @@ cat <<'HELP'
 Navicat macOS V2.1
   bash navicat-v2.sh inspect
   bash navicat-v2.sh doctor
+  bash navicat-v2.sh audit-18      # Read-only file fingerprints; does not reset trial
   bash navicat-v2.sh dry-run
   bash navicat-v2.sh backup
   bash navicat-v2.sh backups
@@ -320,6 +321,21 @@ restore_now() {
   trap - ERR INT TERM
   log "Restored id=$ID entries=${#RESTORE_RELS[@]} conflicts_archived=$conflicts journal=$TXN"
 }
+audit18() {
+  [[ "${VERSION%%.*}" == "18" ]] || fail "audit-18 requires Navicat Premium version 18"
+  log "Navicat 18 read-only audit: candidate patterns are NOT verified trial records"
+  if [[ -f "$PREF" ]]; then
+    log "preferences: size=$(wc -c < "$PREF" | tr -d ' ') sha256=$(hash_file "$PREF")"
+  else
+    log "preferences: absent"
+  fi
+  local f i=0
+  for f in "${FILES[@]}"; do
+    i=$((i+1))
+    log "matching_hidden_file[$i]: size=$(wc -c < "$f" | tr -d ' ') sha256=$(hash_file "$f")"
+  done
+  log "audit complete: no files modified, no Keychain reads, reset remains blocked"
+}
 doctor() {
   local d ok=0 bad=0 legacy=0
   log "State directory: $([[ -d "$ROOT" ]] && echo present || echo absent)"
@@ -351,7 +367,7 @@ doctor() {
 # CLI parsing deliberately rejects unknown or repeated options.
 case "$MODE" in
   help|-h|--help) usage; exit 0 ;;
-  inspect|doctor|dry-run|backup|backups|verify-backup|restore|reset) ;;
+  inspect|doctor|audit-18|dry-run|backup|backups|verify-backup|restore|reset) ;;
   *) usage; exit 2 ;;
 esac
 if [[ "$MODE" == restore || "$MODE" == verify-backup ]]; then
@@ -387,10 +403,11 @@ case "$MODE" in
     initialize
     restore_now
     ;;
-  inspect|doctor|dry-run)
+  inspect|doctor|audit-18|dry-run)
     detect
     scan
     if [[ "$MODE" == doctor ]]; then doctor; fi
+    if [[ "$MODE" == audit-18 ]]; then audit18; fi
     if [[ "$MODE" == dry-run ]]; then log "DRY RUN: no modifications; reset policy=$( [[ "$ELIGIBLE" == 1 ]] && echo eligible || echo blocked )"; fi
     ;;
   backup|reset)
