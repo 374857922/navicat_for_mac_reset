@@ -1,0 +1,21 @@
+name: V2.1 isolated tests
+on:
+  push:
+    paths:
+      - 'navicat-v2.sh'
+      - 'tests/**'
+      - '.github/workflows/v21-tests.yml'
+  pull_request:
+    paths:
+      - 'navicat-v2.sh'
+      - 'tests/**'
+      - '.github/workflows/v21-tests.yml'
+jobs:
+  bash-and-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Bash syntax
+        run: bash -n navicat-v2.sh
+      - name: Run isolated tests (no installed Navicat)
+        run: python3 -m unittest discover -s tests -v
